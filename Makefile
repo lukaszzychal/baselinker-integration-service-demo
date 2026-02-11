@@ -10,19 +10,19 @@ logs:
 	docker compose logs -f app
 
 test:
-	docker compose exec app vendor/bin/phpunit
+	docker compose exec app composer test
 
 test-contract:
-	docker compose exec app vendor/bin/phpunit --group external
+	docker compose exec app composer test:contract
 
 phpstan:
-	docker compose exec app vendor/bin/phpstan analyse
+	docker compose exec app composer analyse
 
 cs-fix:
-	docker compose exec app vendor/bin/php-cs-fixer fix
+	docker compose exec app composer cs:fix
 
 cs-check:
-	docker compose exec app vendor/bin/php-cs-fixer fix --dry-run --diff
+	docker compose exec app composer cs:check
 
 shell:
 	docker compose exec app bash
