@@ -10,7 +10,7 @@ final readonly class OrderDTO
         public string $externalId,
         public string $marketplace,
         public string $customerName,
-        public float $totalAmount,
+        public int $totalAmount,
         public \DateTimeImmutable $createdAt,
         /** @var array<int, array<string, mixed>> */
         public array $products = [],

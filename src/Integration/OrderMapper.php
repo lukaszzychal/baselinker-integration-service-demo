@@ -26,20 +26,20 @@ class OrderMapper
     /**
      * @param array<string, mixed> $order
      */
-    private function calculateTotal(array $order): float
+    private function calculateTotal(array $order): int
     {
-        $total = 0.0;
+        $total = 0;
         /** @var array<int, array<string, mixed>> $products */
         $products = (array) ($order['products'] ?? []);
 
         foreach ($products as $product) {
             $price = (float) ($product['price_brutto'] ?? 0.0);
             $qty = (int) ($product['quantity'] ?? 1);
-            $total += $price * $qty;
+            $total += (int) round($price * 100) * $qty;
         }
 
         $deliveryPrice = (float) ($order['delivery_price'] ?? 0.0);
 
-        return $total + $deliveryPrice;
+        return $total + (int) round($deliveryPrice * 100);
     }
 }

@@ -12,6 +12,9 @@ logs:
 test:
 	docker compose exec app vendor/bin/phpunit
 
+test-contract:
+	docker compose exec app vendor/bin/phpunit --group external
+
 phpstan:
 	docker compose exec app vendor/bin/phpstan analyse
 
