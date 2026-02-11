@@ -30,3 +30,9 @@ services:
     App\Integration\BaselinkerClientInterface:
         alias: App\Integration\BaselinkerClient
         public: true
+
+    # Dekorator: Przejmuje wywołania do BaselinkerClient
+    App\Integration\Decorator\LoggingClientDecorator:
+        decorates: App\Integration\BaselinkerClient
+        arguments:
+            $client: '@.inner' # Oryginalny (prawdziwy) klient trafia tu jako "wnętrze" dekoratora
