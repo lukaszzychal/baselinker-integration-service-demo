@@ -23,9 +23,4 @@ final class BaselinkerClientStub implements BaselinkerClientInterface
     {
         return $this->ordersResponse;
     }
-
-    public function getOrderDetails(array $params): array
-    {
-        return []; // Not needed for current tests
-    }
 }

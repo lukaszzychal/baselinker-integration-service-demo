@@ -29,16 +29,6 @@ final class BaselinkerClient implements BaselinkerClientInterface
      *
      * @return array<string, mixed>
      */
-    public function getOrderDetails(array $params): array
-    {
-        return $this->request('getOrderDetails', $params);
-    }
-
-    /**
-     * @param array<string, mixed> $params
-     *
-     * @return array<string, mixed>
-     */
     private function request(string $method, array $params): array
     {
         $response = $this->httpClient->request('POST', self::API_URL, [
