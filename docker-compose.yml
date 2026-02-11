@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: baselinker_app
+    volumes:
+      - ./:/app
+      - vendor:/app/vendor
+    depends_on:
+      - db
+    networks:
+      - baselinker_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: baselinker_nginx
+    volumes:
+      - ./:/app
+      - ./docker/nginx/dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+    networks:
+      - baselinker_net
+
+  db:
+    image: postgres:15-alpine
+    container_name: baselinker_db
+    environment:
+      POSTGRES_DB: baselinker_dev
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - baselinker_net
+
+volumes:
+  vendor:
+  db_data:
+
+
+networks:
+  baselinker_net:
+    driver: bridge

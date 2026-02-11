@@ -1,0 +1,14 @@
+title = "Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlisted files and patterns"
+paths = [
+    '''vendor/.*''',
+    '''\.env''',
+    '''\.env\.local\.dist''',
+    '''docker-compose\.yml''',
+    '''\.git/.*''',
+]
