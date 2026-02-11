@@ -23,6 +23,12 @@
         </testsuite>
     </testsuites>
 
+    <groups>
+        <exclude>
+            <group>external</group>
+        </exclude>
+    </groups>
+
     <source ignoreSuppressionOfDeprecations="true"
             ignoreIndirectDeprecations="true"
             restrictNotices="true"
