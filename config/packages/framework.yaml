@@ -5,6 +5,22 @@ framework:
     http_method_override: false
     handle_all_throwables: true
 
+    http_client:
+        default_options:
+            retry_failed:
+                enabled: true
+                max_retries: 3
+                delay: 500
+                multiplier: 2
+                max_delay: 5000
+                jitter: 0.1
+                http_codes:
+                    - { code: 429, methods: ['POST'] }
+                    - { code: 500, methods: ['POST'] }
+                    - { code: 502, methods: ['POST'] }
+                    - { code: 503, methods: ['POST'] }
+                    - { code: 504, methods: ['POST'] }
+
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
     session:
