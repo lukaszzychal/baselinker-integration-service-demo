@@ -16,10 +16,14 @@ final readonly class OrderFetchService
     ) {
     }
 
-    /** @return array<int, OrderDTO> */
-    public function fetchOrders(\DateTimeInterface $from): array
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return array<int, OrderDTO>
+     */
+    public function fetchOrders(\DateTimeInterface $from, array $filters = []): array
     {
-        $result = $this->client->getOrders($from);
+        $result = $this->client->getOrders($from, $filters);
 
         /** @var array<int, array<string, mixed>> $orders */
         $orders = $result['orders'] ?? [];

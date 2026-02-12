@@ -25,7 +25,7 @@ class FetchOrdersCommand extends Command
     {
         $this
             ->setDescription('Fetches orders from Baselinker')
-            ->addOption('marketplace', 'm', InputOption::VALUE_REQUIRED, 'Marketplace name', 'all')
+            ->addOption('marketplace', 'm', InputOption::VALUE_REQUIRED, 'Marketplace name(s), comma-separated for multiple (e.g. allegro,amazon)', 'all')
             ->addOption('from', null, InputOption::VALUE_REQUIRED, 'Date from (Y-m-d)', (new \DateTimeImmutable('-1 day'))->format('Y-m-d'));
     }
 

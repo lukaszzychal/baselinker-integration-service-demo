@@ -24,11 +24,27 @@ final class RateLimitingClientDecorator implements BaselinkerClientInterface
     }
 
     /** @return array<string, mixed> */
-    public function getOrders(\DateTimeInterface $from): array
+    public function getOrders(\DateTimeInterface $from, array $filters = []): array
     {
         $this->consume();
 
-        return $this->client->getOrders($from);
+        return $this->client->getOrders($from, $filters);
+    }
+
+    /** @return array<string, mixed> */
+    public function getOrderSources(): array
+    {
+        $this->consume();
+
+        return $this->client->getOrderSources();
+    }
+
+    /** @return array<string, mixed> */
+    public function getOrderStatusList(): array
+    {
+        $this->consume();
+
+        return $this->client->getOrderStatusList();
     }
 
     private function consume(): void

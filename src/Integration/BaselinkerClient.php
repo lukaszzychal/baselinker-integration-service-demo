@@ -17,11 +17,24 @@ final class BaselinkerClient implements BaselinkerClientInterface
     }
 
     /** @return array<string, mixed> */
-    public function getOrders(\DateTimeInterface $from): array
+    public function getOrders(\DateTimeInterface $from, array $filters = []): array
     {
-        return $this->request('getOrders', [
-            'date_from' => $from->getTimestamp(),
-        ]);
+        return $this->request('getOrders', array_merge(
+            ['date_from' => $from->getTimestamp()],
+            $filters,
+        ));
+    }
+
+    /** @return array<string, mixed> */
+    public function getOrderSources(): array
+    {
+        return $this->request('getOrderSources', []);
+    }
+
+    /** @return array<string, mixed> */
+    public function getOrderStatusList(): array
+    {
+        return $this->request('getOrderStatusList', []);
     }
 
     /**

@@ -55,6 +55,19 @@ class FetchOrdersCommandTest extends TestCase
         $this->assertSame('allegro', $request->filter_order_source);
     }
 
+    public function testExecutePassesCommaMarketplacesAsFilterOrderSource(): void
+    {
+        $this->commandTester->execute([
+            '--marketplace' => 'allegro,amazon',
+        ]);
+
+        $this->commandTester->assertCommandIsSuccessful();
+        $this->assertSame(1, $this->useCaseSpy->executeCount);
+        $request = $this->useCaseSpy->lastRequest;
+        $this->assertNotNull($request);
+        $this->assertSame('allegro,amazon', $request->filter_order_source);
+    }
+
     public function testExecuteReturnsFailureOnInvalidDate(): void
     {
         $this->commandTester->execute([

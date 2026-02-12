@@ -8,17 +8,47 @@ use App\Integration\BaselinkerClientInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * Contract tests against real Baselinker API.
+ * Run with: make test-contract (requires BASELINKER_API_TOKEN).
+ */
 #[Group('external')]
 class BaselinkerApiTest extends KernelTestCase
 {
-    public function testConnectsToRealApi(): void
+    public function testGetOrdersContract(): void
     {
         self::bootKernel();
         $client = static::getContainer()->get(BaselinkerClientInterface::class);
         $this->assertInstanceOf(BaselinkerClientInterface::class, $client);
         /** @var BaselinkerClientInterface $client */
-        $orders = $client->getOrders(new \DateTimeImmutable('-1 hour'));
+        $result = $client->getOrders(new \DateTimeImmutable('-1 hour'));
 
-        $this->assertEquals('SUCCESS', $orders['status']);
+        $this->assertSame('SUCCESS', $result['status']);
+        $this->assertArrayHasKey('orders', $result);
+        $this->assertIsArray($result['orders']);
+    }
+
+    public function testGetOrderSourcesContract(): void
+    {
+        self::bootKernel();
+        $client = static::getContainer()->get(BaselinkerClientInterface::class);
+        /** @var BaselinkerClientInterface $client */
+        $result = $client->getOrderSources();
+
+        $this->assertSame('SUCCESS', $result['status']);
+        $this->assertArrayHasKey('sources', $result);
+        $this->assertIsArray($result['sources']);
+    }
+
+    public function testGetOrderStatusListContract(): void
+    {
+        self::bootKernel();
+        $client = static::getContainer()->get(BaselinkerClientInterface::class);
+        /** @var BaselinkerClientInterface $client */
+        $result = $client->getOrderStatusList();
+
+        $this->assertSame('SUCCESS', $result['status']);
+        $this->assertArrayHasKey('statuses', $result);
+        $this->assertIsArray($result['statuses']);
     }
 }

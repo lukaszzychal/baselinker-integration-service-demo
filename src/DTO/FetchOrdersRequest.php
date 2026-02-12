@@ -55,4 +55,23 @@ final readonly class FetchOrdersRequest
         public bool $include_connect_data = false,
     ) {
     }
+
+    public function withFilterOrderSource(?string $source): self
+    {
+        return new self(
+            order_id: $this->order_id,
+            date_confirmed_from: $this->date_confirmed_from,
+            date_from: $this->date_from,
+            id_from: $this->id_from,
+            get_unconfirmed_orders: $this->get_unconfirmed_orders,
+            status_id: $this->status_id,
+            filter_email: $this->filter_email,
+            filter_order_source: $source,
+            filter_order_source_id: $this->filter_order_source_id,
+            filter_shop_order_id: $this->filter_shop_order_id,
+            include_custom_extra_fields: $this->include_custom_extra_fields,
+            include_commission_data: $this->include_commission_data,
+            include_connect_data: $this->include_connect_data,
+        );
+    }
 }

@@ -51,4 +51,42 @@ class FetchOrdersHandlerTest extends TestCase
         $this->assertInstanceOf(\App\Entity\Order::class, $repositorySpy->lastSavedOrder);
         $this->assertEquals(123, $repositorySpy->lastSavedOrder->externalId);
     }
+
+    public function testFiltersArePassedToClient(): void
+    {
+        $client = new BaselinkerClientStub(['status' => 'SUCCESS', 'orders' => []]);
+        $mapper = new OrderMapper();
+        $repositorySpy = new \App\Tests\Doubles\OrderRepositorySpy();
+
+        $handler = new FetchOrdersHandler($client, $mapper, $repositorySpy);
+
+        $message = new FetchOrders(
+            from: new \DateTimeImmutable('2023-01-01'),
+            marketplace: 'allegro',
+            filters: ['status_id' => 5],
+        );
+
+        $handler($message);
+
+        $this->assertSame('allegro', $client->lastFilters['filter_order_source'] ?? null);
+        $this->assertSame(5, $client->lastFilters['status_id'] ?? null);
+    }
+
+    public function testMarketplaceAllDoesNotAddFilterOrderSource(): void
+    {
+        $client = new BaselinkerClientStub(['status' => 'SUCCESS', 'orders' => []]);
+        $mapper = new OrderMapper();
+        $repositorySpy = new \App\Tests\Doubles\OrderRepositorySpy();
+
+        $handler = new FetchOrdersHandler($client, $mapper, $repositorySpy);
+
+        $message = new FetchOrders(
+            from: new \DateTimeImmutable('2023-01-01'),
+            marketplace: 'all',
+        );
+
+        $handler($message);
+
+        $this->assertArrayNotHasKey('filter_order_source', $client->lastFilters ?? []);
+    }
 }

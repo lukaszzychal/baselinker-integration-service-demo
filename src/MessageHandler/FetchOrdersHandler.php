@@ -19,8 +19,13 @@ final class FetchOrdersHandler
 
     public function __invoke(FetchOrders $message): void
     {
-        // TODO: Use marketplace and filters from message when strategy pattern is implemented
-        $result = $this->client->getOrders($message->from);
+        $filters = $message->filters;
+
+        if ('all' !== $message->marketplace) {
+            $filters['filter_order_source'] = $message->marketplace;
+        }
+
+        $result = $this->client->getOrders($message->from, $filters);
 
         /** @var array<int, array<string, mixed>> $orders */
         $orders = $result['orders'] ?? [];
