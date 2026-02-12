@@ -23,8 +23,20 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+
+    baselinker_ganesha:
+        class: Ackintosh\Ganesha
+        factory: [App\Integration\GaneshaFactory, 'create']
+
+    baselinker_http_client:
+        class: Ackintosh\Ganesha\GaneshaHttpClient
+        arguments:
+            $client: '@http_client'
+            $ganesha: '@baselinker_ganesha'
+
     App\Integration\BaselinkerClient:
         arguments:
+            $httpClient: '@baselinker_http_client'
             $token: '%env(BASELINKER_API_TOKEN)%'
 
     App\Integration\BaselinkerClientInterface:

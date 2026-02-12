@@ -4,8 +4,84 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6f0fdfef1041e7bc622a95ea1cbf77b",
+    "content-hash": "171bad17943509ddb2ca24e65d43f725",
     "packages": [
+        {
+            "name": "ackintosh/ganesha",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ackintosh/ganesha.git",
+                "reference": "12415f1e86b6b6463ea6f0195099e91b3259eebd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ackintosh/ganesha/zipball/12415f1e86b6b6463ea6f0195099e91b3259eebd",
+                "reference": "12415f1e86b6b6463ea6f0195099e91b3259eebd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "psr/http-message": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "ext-memcached": "~3.1",
+                "ext-mongodb": "~1.6",
+                "ext-redis": "~5.1",
+                "friendsofphp/php-cs-fixer": "^v3.1.0",
+                "guzzlehttp/guzzle": "^7.4.5",
+                "php-coveralls/php-coveralls": "~2.5",
+                "php-vcr/php-vcr": "dev-master#c0aeeba0f3804fcfdb9cd6b390b0cb3be250c070 as 1.9.0",
+                "php-vcr/phpunit-testlistener-vcr": "dev-phpunit-evt-system",
+                "phpunit/phpunit": "^10.5.41",
+                "predis/predis": "^1.1",
+                "symfony/http-client": "^5.3.12|^6.0",
+                "symfony/yaml": "^3.0|^4.0|^5.0|^6.0",
+                "vimeo/psalm": "*"
+            },
+            "suggest": {
+                "ext-memcached": "Allows the usage of MemcachedAdapter",
+                "ext-mongodb": "Allows the usage of MongoDBAdapter",
+                "ext-redis": "Allows the usage of RedisAdapter with Redis, RedisArray and RedisCluster",
+                "guzzlehttp/guzzle": "Allows the usage of the Guzzle Middleware",
+                "symfony/http-client": "Allows the usage of the Ganesha HttpClient"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ackintosh\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "akihito.nakano",
+                    "email": "sora.akatsuki@gmail.com"
+                }
+            ],
+            "description": "PHP implementation of Circuit Breaker pattern",
+            "keywords": [
+                "circuit breaker",
+                "error handling",
+                "fault tolerance",
+                "guzzle middleware",
+                "microservices"
+            ],
+            "support": {
+                "issues": "https://github.com/ackintosh/ganesha/issues",
+                "source": "https://github.com/ackintosh/ganesha/tree/4.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ackintosh",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-22T10:10:26+00:00"
+        },
         {
             "name": "doctrine/collections",
             "version": "2.6.0",
@@ -1643,6 +1719,59 @@
                 "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
             },
             "time": "2019-01-08T18:20:26+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-message/tree/2.0"
+            },
+            "time": "2023-04-04T09:54:51+00:00"
         },
         {
             "name": "psr/log",

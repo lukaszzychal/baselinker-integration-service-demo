@@ -25,6 +25,12 @@ RUN docker-php-ext-install \
     opcache \
     zip
 
+# APCu for Ganesha Circuit Breaker (no Redis required)
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
+    && apk del $PHPIZE_DEPS
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
