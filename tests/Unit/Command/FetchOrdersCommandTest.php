@@ -5,68 +5,58 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Command;
 
 use App\Command\FetchOrdersCommand;
-use App\DTO\FetchOrdersRequest;
-use App\UseCase\FetchOrdersUseCaseInterface;
+use App\Tests\Doubles\FetchOrdersUseCaseSpy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class FetchOrdersCommandTest extends TestCase
 {
-    /** @var FetchOrdersUseCaseInterface&\PHPUnit\Framework\MockObject\MockObject */
-    private $useCase;
+    private FetchOrdersUseCaseSpy $useCaseSpy;
     private CommandTester $commandTester;
 
     protected function setUp(): void
     {
-        $this->useCase = $this->createMock(FetchOrdersUseCaseInterface::class);
+        $this->useCaseSpy = new FetchOrdersUseCaseSpy();
 
-        $command = new FetchOrdersCommand($this->useCase);
+        $command = new FetchOrdersCommand($this->useCaseSpy);
         $this->commandTester = new CommandTester($command);
     }
 
     public function testExecuteDispatchesMessageWithDefaultOptions(): void
     {
-        $this->useCase->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(function (FetchOrdersRequest $request) {
-                // Default date is -1 day
-                $expectedDate = (new \DateTimeImmutable('-1 day'))->format('Y-m-d');
-
-                return date('Y-m-d', (int) $request->date_from) === $expectedDate
-                    && null === $request->filter_order_source; // 'all' becomes null in command logic
-            }));
-
         $this->commandTester->execute([]);
 
         $this->commandTester->assertCommandIsSuccessful();
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Orders fetch command dispatched successfully!', $output);
+
+        $this->assertSame(1, $this->useCaseSpy->executeCount);
+        $request = $this->useCaseSpy->lastRequest;
+        $this->assertNotNull($request);
+
+        $expectedDate = (new \DateTimeImmutable('-1 day'))->format('Y-m-d');
+        $this->assertSame($expectedDate, date('Y-m-d', (int) $request->date_from));
+        $this->assertNull($request->filter_order_source);
     }
 
     public function testExecuteDispatchesMessageWithCustomOptions(): void
     {
-        $customDate = '2023-12-31';
-        $customMarketplace = 'allegro';
-
-        $this->useCase->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(function (FetchOrdersRequest $request) use ($customDate, $customMarketplace) {
-                return date('Y-m-d', (int) $request->date_from) === $customDate
-                    && $request->filter_order_source === $customMarketplace;
-            }));
-
         $this->commandTester->execute([
-            '--from' => $customDate,
-            '--marketplace' => $customMarketplace,
+            '--from' => '2023-12-31',
+            '--marketplace' => 'allegro',
         ]);
 
         $this->commandTester->assertCommandIsSuccessful();
+
+        $this->assertSame(1, $this->useCaseSpy->executeCount);
+        $request = $this->useCaseSpy->lastRequest;
+        $this->assertNotNull($request);
+        $this->assertSame('2023-12-31', date('Y-m-d', (int) $request->date_from));
+        $this->assertSame('allegro', $request->filter_order_source);
     }
 
     public function testExecuteReturnsFailureOnInvalidDate(): void
     {
-        $this->useCase->expects($this->never())->method('execute');
-
         $this->commandTester->execute([
             '--from' => 'invalid-date',
         ]);
@@ -74,5 +64,7 @@ class FetchOrdersCommandTest extends TestCase
         $this->assertNotEquals(0, $this->commandTester->getStatusCode());
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Invalid date format', $output);
+
+        $this->assertSame(0, $this->useCaseSpy->executeCount);
     }
 }
