@@ -17,10 +17,16 @@ Instrukcje krok po kroku z gotowymi komendami do wklejenia w terminal (curl, CLI
    php bin/console doctrine:migrations:migrate --no-interaction
    symfony server:start -d
    ```
-   Lub w Dockerze: `docker compose up -d` i użyj URL serwisu (np. `http://app:80` wewnątrz sieci lub zmapowany port na localhost).
+   **Lub w Dockerze:** najpierw zbuduj obraz, potem uruchom kontenery:
+   ```bash
+   docker compose build app
+   docker compose up -d
+   make migrate   # migracje bazy dev (opcjonalnie)
+   ```
+   API z hosta: **http://localhost:8080** (nginx). Wewnątrz sieci Docker: `http://app` lub `http://nginx`.
 
 3. **Baza URL**  
-   W przykładach poniżej używane jest `http://localhost:8000`. Zamień na swój URL (np. `http://127.0.0.1:8080`), jeśli inny.
+   W przykładach poniżej: `http://localhost:8000` (Symfony CLI) lub **`http://localhost:8080`** (Docker). Zamień na swój URL, jeśli inny.
 
 ---
 
