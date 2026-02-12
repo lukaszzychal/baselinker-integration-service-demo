@@ -1,0 +1,13 @@
+# SonarQube / SonarCloud — jakość i bezpieczeństwo kodu (opcjonalnie).
+# Skopiuj jako sonar-project.properties i uzupełnij sonar.organization / sonar.projectKey
+# lub ustaw w CI (np. GitHub Actions) przez zmienne.
+
+sonar.projectKey=baselinker-integration-demo
+sonar.projectName=Baselinker Integration Service Demo
+
+sonar.sources=src
+sonar.tests=tests
+sonar.php.coverage.reportPaths=var/coverage/clover.xml
+sonar.exclusions=**/var/**,**/vendor/**,**/migrations/**,**/config/**,**/public/**
+
+# SonarCloud (jeśli używasz): sonar.organization=twoja-org

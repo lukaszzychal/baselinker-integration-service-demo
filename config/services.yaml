@@ -44,6 +44,13 @@ services:
             $client: '@.inner'
             $baselinkerApiLimiter: '@limiter.baselinker_api'
 
+    App\Integration\Decorator\MetricsClientDecorator:
+        decorates: App\Integration\BaselinkerClient
+        decoration_priority: 30
+        arguments:
+            $client: '@.inner'
+            $metricsLogger: '@monolog.logger.metrics'
+
     App\Repository\OrderRepositoryInterface:
         alias: App\Repository\OrderRepository
         public: true

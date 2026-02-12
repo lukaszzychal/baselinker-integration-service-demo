@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Integration;
 
 use App\Integration\BaselinkerClient;
+use App\Integration\Exception\BaselinkerApiException;
+use App\Integration\Exception\InvalidResponseException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -132,5 +134,34 @@ class BaselinkerClientTest extends TestCase
         }
 
         $this->assertSame('getOrderStatusList', $parsed['method'] ?? null);
+    }
+
+    public function testRequestThrowsBaselinkerApiExceptionWhenStatusIsNotSuccess(): void
+    {
+        $json = (string) json_encode([
+            'status' => 'ERROR',
+            'error_message' => 'Invalid token',
+        ]);
+
+        $httpClient = new MockHttpClient(new MockResponse($json));
+        $client = new BaselinkerClient($httpClient, 'fake-token');
+
+        $this->expectException(BaselinkerApiException::class);
+        $this->expectExceptionMessage('Invalid token');
+
+        $client->getOrderSources();
+    }
+
+    public function testRequestThrowsInvalidResponseExceptionWhenStatusKeyMissing(): void
+    {
+        $json = (string) json_encode(['sources' => []]);
+
+        $httpClient = new MockHttpClient(new MockResponse($json));
+        $client = new BaselinkerClient($httpClient, 'fake-token');
+
+        $this->expectException(InvalidResponseException::class);
+        $this->expectExceptionMessage('missing "status"');
+
+        $client->getOrderSources();
     }
 }

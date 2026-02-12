@@ -26,4 +26,11 @@ interface BaselinkerClientInterface
      * @return array<string, mixed>
      */
     public function getOrderStatusList(): array;
+
+    /**
+     * Returns transaction details for a single order (currency, fulfillment, marketplace transaction ID, etc.).
+     *
+     * @return array<string, mixed>
+     */
+    public function getOrderTransactionData(int $orderId): array;
 }

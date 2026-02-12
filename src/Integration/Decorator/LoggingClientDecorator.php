@@ -53,4 +53,15 @@ class LoggingClientDecorator implements BaselinkerClientInterface
 
         return $result;
     }
+
+    public function getOrderTransactionData(int $orderId): array
+    {
+        $this->logger->info('Fetching order transaction data from Baselinker', ['order_id' => $orderId]);
+
+        $result = $this->client->getOrderTransactionData($orderId);
+
+        $this->logger->info('Order transaction data fetched successfully', ['order_id' => $orderId]);
+
+        return $result;
+    }
 }

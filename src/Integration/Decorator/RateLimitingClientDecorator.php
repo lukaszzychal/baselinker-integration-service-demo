@@ -47,6 +47,14 @@ final class RateLimitingClientDecorator implements BaselinkerClientInterface
         return $this->client->getOrderStatusList();
     }
 
+    /** @return array<string, mixed> */
+    public function getOrderTransactionData(int $orderId): array
+    {
+        $this->consume();
+
+        return $this->client->getOrderTransactionData($orderId);
+    }
+
     private function consume(): void
     {
         $limiter = $this->baselinkerApiLimiter->create('baselinker_api');

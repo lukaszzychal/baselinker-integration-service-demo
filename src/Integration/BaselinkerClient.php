@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Integration;
 
+use App\Integration\Exception\BaselinkerApiException;
+use App\Integration\Exception\InvalidResponseException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class BaselinkerClient implements BaselinkerClientInterface
@@ -37,6 +39,12 @@ final class BaselinkerClient implements BaselinkerClientInterface
         return $this->request('getOrderStatusList', []);
     }
 
+    /** @return array<string, mixed> */
+    public function getOrderTransactionData(int $orderId): array
+    {
+        return $this->request('getOrderTransactionData', ['order_id' => $orderId]);
+    }
+
     /**
      * @param array<string, mixed> $params
      *
@@ -57,8 +65,14 @@ final class BaselinkerClient implements BaselinkerClientInterface
         /** @var array<string, mixed> $data */
         $data = $response->toArray();
 
+        if (!\array_key_exists('status', $data)) {
+            throw new InvalidResponseException('Baselinker API response missing "status" key.');
+        }
+
         if (($data['status'] ?? '') !== 'SUCCESS') {
-            throw new \RuntimeException('Baselinker API error: ' . (string) json_encode($data));
+            $message = $data['error_message'] ?? $data['error_msg'] ?? (string) json_encode($data);
+
+            throw new BaselinkerApiException('Baselinker API error: ' . $message);
         }
 
         return $data;
