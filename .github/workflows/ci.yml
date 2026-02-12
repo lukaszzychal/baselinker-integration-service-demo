@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  COMPOSE_DOCKER_CLI_BUILD: 1
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  ci:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build containers
+        run: docker compose build
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for DB
+        run: |
+          for i in $(seq 1 30); do
+            docker compose exec -T db pg_isready -U app -d baselinker_dev && break
+            echo "Waiting for DB... ($i/30)"
+            sleep 1
+          done
+
+      - name: Create test database
+        run: docker compose exec -T db psql -U app -d baselinker_dev -c "CREATE DATABASE baselinker_test OWNER app;"
+
+      - name: Install dependencies
+        run: docker compose exec -T app composer install --no-interaction --prefer-dist
+
+      - name: CS Fixer
+        run: docker compose exec -T app composer cs:check
+
+      - name: PHPStan
+        run: docker compose exec -T app composer analyse
+
+      - name: Run migrations
+        run: docker compose exec -T app php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: PHPUnit
+        run: docker compose exec -T app composer test
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
