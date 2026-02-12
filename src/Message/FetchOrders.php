@@ -19,6 +19,8 @@ final readonly class FetchOrders
 
         /**
          * Additional filters mapping to parameters like 'status_id', 'filter_email', etc.
+         *
+         * @var array<string, mixed>
          */
         public array $filters = [],
     ) {

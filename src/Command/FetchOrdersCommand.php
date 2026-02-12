@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
-use App\Message\FetchOrders;
+use App\DTO\FetchOrdersRequest;
+use App\UseCase\FetchOrdersUseCaseInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'app:fetch-orders')]
 class FetchOrdersCommand extends Command
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private readonly FetchOrdersUseCaseInterface $useCase,
     ) {
         parent::__construct();
     }
@@ -30,23 +32,26 @@ class FetchOrdersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $from = $input->getOption('from');
-        
+
         try {
             $date = new \DateTimeImmutable($from);
         } catch (\Exception $e) {
             $output->writeln('<error>Invalid date format. Use Y-m-d.</error>');
+
             return Command::FAILURE;
         }
 
         $marketplace = $input->getOption('marketplace');
 
-        $this->messageBus->dispatch(new FetchOrders(
-            from: $date,
-            marketplace: $marketplace
-        ));
-        
+        $request = new FetchOrdersRequest(
+            date_from: $date->getTimestamp(),
+            filter_order_source: 'all' === $marketplace ? null : $marketplace
+        );
+
+        $this->useCase->execute($request);
+
         $output->writeln('<info>Orders fetch command dispatched successfully!</info>');
-        
+
         return Command::SUCCESS;
     }
 }

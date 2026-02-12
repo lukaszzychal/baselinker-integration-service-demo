@@ -13,10 +13,25 @@ class OrderRepositorySpy implements OrderRepositoryInterface
     public ?Order $lastSavedOrder = null;
     /** @var array<string, Order> */
     private array $orders = [];
+    /** @var array<int, Order> */
+    private array $ordersById = [];
+    private int $nextId = 1;
+
+    /**
+     * @return list<Order>
+     */
+    public function findAll(): array
+    {
+        return array_values($this->ordersById);
+    }
+
+    public function findById(int $id): ?Order
+    {
+        return $this->ordersById[$id] ?? null;
+    }
 
     public function findByExternalId(string $externalId, string $marketplace): ?Order
     {
-        // Simulate database lookup
         return $this->orders[$externalId . '-' . $marketplace] ?? null;
     }
 
@@ -24,6 +39,14 @@ class OrderRepositorySpy implements OrderRepositoryInterface
     {
         $this->saveWasCalled = true;
         $this->lastSavedOrder = $order;
-        $this->orders[$order->externalId . '-' . $order->marketplace] = $order;
+
+        $key = $order->externalId . '-' . $order->marketplace;
+        if (null === $order->id) {
+            $id = $this->nextId++;
+            $reflection = new \ReflectionProperty(Order::class, 'id');
+            $reflection->setValue($order, $id);
+            $this->ordersById[$id] = $order;
+        }
+        $this->orders[$key] = $order;
     }
 }

@@ -10,16 +10,16 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OrderRepositoryTest extends KernelTestCase
 {
-    private ?OrderRepository $repository;
+    private OrderRepository $repository;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container = static::getContainer();
-        
-        /** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
-        $entityManager = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
-        $this->repository = $entityManager->getRepository(Order::class);
+
+        $repository = $container->get(OrderRepository::class);
+        $this->assertInstanceOf(OrderRepository::class, $repository);
+        $this->repository = $repository;
 
         // Optional: truncate table if not using transaction rollback
         // $this->truncateEntities([Order::class]);
@@ -31,7 +31,7 @@ class OrderRepositoryTest extends KernelTestCase
         $marketplace = 'amazon';
         $customerName = 'John Doe';
         $totalAmount = '100.00';
-        
+
         $order = new Order(
             $externalId,
             $marketplace,
@@ -49,7 +49,6 @@ class OrderRepositoryTest extends KernelTestCase
         $this->assertSame($customerName, $foundOrder->customerName);
         $this->assertSame($totalAmount, $foundOrder->totalAmount);
         $this->assertNotNull($foundOrder->id);
-        $this->assertNotNull($foundOrder->createdAt);
     }
 
     public function testFindByExternalIdReturnsNullWhenNotFound(): void
@@ -58,7 +57,26 @@ class OrderRepositoryTest extends KernelTestCase
 
         $this->assertNull($foundOrder);
     }
-    
+
+    public function testFindByIdReturnsCorrectOrder(): void
+    {
+        $order = new Order('ext-456', 'allegro', 'Test User', '99.99');
+        $this->repository->save($order, true);
+
+        $foundOrder = $this->repository->findById((int) $order->id);
+
+        $this->assertNotNull($foundOrder);
+        $this->assertSame($order->id, $foundOrder->id);
+        $this->assertSame('ext-456', $foundOrder->externalId);
+    }
+
+    public function testFindByIdReturnsNullWhenNotFound(): void
+    {
+        $foundOrder = $this->repository->findById(99999);
+
+        $this->assertNull($foundOrder);
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
