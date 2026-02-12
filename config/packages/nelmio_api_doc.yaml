@@ -1,0 +1,9 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Baselinker Integration API
+            description: API do integracji z Baselinker (zamówienia, statusy, źródła).
+            version: 1.0.0
+    areas:
+        path_patterns:
+            - ^/api(?!/doc)

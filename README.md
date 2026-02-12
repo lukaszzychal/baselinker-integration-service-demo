@@ -20,7 +20,7 @@ make migrate
 make test
 ```
 
-Aplikacja: **http://localhost:8080** (nginx). Health check: `curl http://localhost:8080/api/health`.
+Aplikacja: **http://localhost:8080** (nginx). Strona powitalna: [http://localhost:8080/](http://localhost:8080/), dokumentacja API (Swagger UI): [http://localhost:8080/api/doc](http://localhost:8080/api/doc), health: `curl http://localhost:8080/api/health`.
 
 ## Makefile – najważniejsze cele
 

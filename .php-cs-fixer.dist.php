@@ -8,6 +8,7 @@ $finder = (new PhpCsFixer\Finder())
 ;
 
 return (new PhpCsFixer\Config())
+    ->setCacheFile(sys_get_temp_dir() . '/.php-cs-fixer-' . md5((string) __DIR__) . '.cache')
     ->setRules([
         '@PSR12' => true,
         '@Symfony' => true,

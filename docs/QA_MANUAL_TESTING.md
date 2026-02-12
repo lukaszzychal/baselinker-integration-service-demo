@@ -21,12 +21,18 @@ Instrukcje krok po kroku z gotowymi komendami do wklejenia w terminal (curl, CLI
    ```bash
    docker compose build app
    docker compose up -d
-   make migrate   # migracje bazy dev (opcjonalnie)
+   make migrate   # wymagane przed użyciem /api/orders (tworzy tabelę order)
    ```
-   API z hosta: **http://localhost:8080** (nginx). Wewnątrz sieci Docker: `http://app` lub `http://nginx`.
+   API z hosta: **http://localhost:8080** (nginx). Wewnątrz sieci Docker: `http://app` lub `http://nginx`.  
+   **Jeśli GET /api/orders zwraca 500 (relation "order" does not exist)** – uruchom migracje: `make migrate` lub `docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction`.
 
 3. **Baza URL**  
    W przykładach poniżej: `http://localhost:8000` (Symfony CLI) lub **`http://localhost:8080`** (Docker). Zamień na swój URL, jeśli inny.
+
+4. **Strona powitalna i dokumentacja API**
+   - **GET /** – strona powitalna z linkami do dokumentacji i health.
+   - **GET /api/doc** – Swagger UI (interaktywna dokumentacja OpenAPI).
+   - **GET /api/doc.json** – specyfikacja OpenAPI w JSON.
 
 ---
 

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Baselinker Integration API{% endblock %}
+
+{% block body %}
+<div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 4rem auto; padding: 2rem;">
+    <h1>Baselinker Integration API</h1>
+    <p>Serwis integracji z Baselinker (pobieranie zamówień, statusy, źródła).</p>
+    <ul style="line-height: 2;">
+        <li><a href="{{ path('app.swagger_ui') }}">Dokumentacja API (Swagger UI)</a></li>
+        <li><a href="{{ path('app.swagger') }}">OpenAPI (JSON)</a></li>
+        <li><a href="{{ path('api_health_check') }}">Health check</a></li>
+    </ul>
+</div>
+{% endblock %}
