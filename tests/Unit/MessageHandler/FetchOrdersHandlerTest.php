@@ -39,12 +39,16 @@ class FetchOrdersHandlerTest extends TestCase
 
         $client = new BaselinkerClientStub($fakeOrders);
         $mapper = new OrderMapper();
-        $handler = new FetchOrdersHandler($client, $mapper);
+        $repositorySpy = new \App\Tests\Doubles\OrderRepositorySpy();
+
+        $handler = new FetchOrdersHandler($client, $mapper, $repositorySpy);
 
         $message = new FetchOrders(new \DateTimeImmutable('2023-01-01'));
 
         $handler($message);
 
-        $this->assertTrue(true, 'Handler executed successfully');
+        $this->assertTrue($repositorySpy->saveWasCalled, 'Repository save method should be called');
+        $this->assertInstanceOf(\App\Entity\Order::class, $repositorySpy->lastSavedOrder);
+        $this->assertEquals(123, $repositorySpy->lastSavedOrder->externalId);
     }
 }

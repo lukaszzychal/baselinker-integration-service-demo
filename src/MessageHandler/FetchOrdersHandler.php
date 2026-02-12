@@ -13,11 +13,13 @@ final class FetchOrdersHandler
     public function __construct(
         private \App\Integration\BaselinkerClientInterface $client,
         private \App\Integration\OrderMapper $mapper,
+        private \App\Repository\OrderRepositoryInterface $repository,
     ) {
     }
 
     public function __invoke(FetchOrders $message): void
     {
+        // TODO: Use marketplace and filters from message when strategy pattern is implemented
         $result = $this->client->getOrders($message->from);
 
         /** @var array<int, array<string, mixed>> $orders */
@@ -27,5 +29,21 @@ final class FetchOrdersHandler
             fn (array $raw) => $this->mapper->map($raw),
             $orders
         );
+
+        foreach ($dtos as $dto) {
+            if ($this->repository->findByExternalId($dto->externalId, $dto->marketplace)) {
+                continue;
+            }
+
+            $order = new \App\Entity\Order(
+                externalId: $dto->externalId,
+                marketplace: $dto->marketplace,
+                customerName: $dto->customerName,
+                totalAmount: number_format($dto->totalAmount / 100, 2, '.', ''),
+                createdAt: $dto->createdAt,
+            );
+
+            $this->repository->save($order, true);
+        }
     }
 }
