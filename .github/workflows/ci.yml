@@ -36,8 +36,9 @@ jobs:
       - name: Create test database
         run: docker compose exec -T db psql -U app -d baselinker_dev -c "CREATE DATABASE baselinker_test OWNER app;"
 
-      - name: Fix var directory permissions
-        run: docker compose exec -T -u root app sh -c 'mkdir -p /app/var/cache /app/var/log && chown -R www-data:www-data /app/var'
+      - name: Fix var and public directory permissions
+        run: |
+          docker compose exec -T -u root app sh -c 'mkdir -p /app/var/cache /app/var/log /app/public/bundles && chown -R www-data:www-data /app/var /app/public'
 
       - name: Install dependencies
         run: docker compose exec -T app composer install --no-interaction --prefer-dist
