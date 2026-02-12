@@ -35,7 +35,7 @@ class OrderMapper
         foreach ($products as $product) {
             $price = (float) ($product['price_brutto'] ?? 0.0);
             $qty = (int) ($product['quantity'] ?? 1);
-            $total += (int) round($price * 100) * $qty;
+            $total += (int) round($price * $qty * 100);
         }
 
         $deliveryPrice = (float) ($order['delivery_price'] ?? 0.0);
