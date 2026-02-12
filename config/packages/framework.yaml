@@ -1,4 +1,7 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
+parameters:
+    baselinker_api_limit_default: 100
+
 framework:
     secret: '%env(APP_SECRET)%'
     annotations: false
@@ -36,7 +39,7 @@ framework:
     rate_limiter:
         baselinker_api:
             policy: 'fixed_window'
-            limit: 100
+            limit: '%env(default:baselinker_api_limit_default:int:BASELINKER_API_LIMIT)%'
             interval: '60 seconds'
 
 when@test:
