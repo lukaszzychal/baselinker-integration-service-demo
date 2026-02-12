@@ -20,23 +20,20 @@ class FetchOrdersController extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(
+        #[\Symfony\Component\HttpKernel\Attribute\MapRequestPayload]
+        \App\DTO\FetchOrdersRequest $requestPayload
+    ): JsonResponse
     {
-        $data = $request->toArray();
-        $dateFrom = $data['from'] ?? null;
-        $marketplace = $data['marketplace'] ?? 'all';
+        // Map DTO to Message
+        // Note: FetchOrders message currently supports 'from' (DateTime) and 'marketplace' (string).
+        // We map 'dateFrom' (int timestamp) or 'dateConfirmedFrom' (int timestamp) to 'from'.
 
-        if (!$dateFrom) {
-            // Default to yesterday if not provided? Or require it?
-            // Command defaults to -1 day. Controller can do the same.
-            $from = new \DateTimeImmutable('-1 day');
-        } else {
-            try {
-                $from = new \DateTimeImmutable($dateFrom);
-            } catch (\Exception $e) {
-                 return new JsonResponse(['error' => 'Invalid date format'], Response::HTTP_BAD_REQUEST);
-            }
-        }
+        $timestamp = $requestPayload->date_from ?? $requestPayload->date_confirmed_from ?? time() - 86400;
+        $from = (new \DateTimeImmutable())->setTimestamp((int)$timestamp);
+
+        $marketplace = $requestPayload->filter_order_source ?? 'all';
+
 
         $this->messageBus->dispatch(new FetchOrders(
             from: $from,

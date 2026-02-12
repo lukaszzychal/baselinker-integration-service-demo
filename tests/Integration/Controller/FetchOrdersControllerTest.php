@@ -29,9 +29,10 @@ class FetchOrdersControllerTest extends WebTestCase
         // Note: Creating client boots the kernel, so we must access container AFTER createClient
         static::getContainer()->set(MessageBusInterface::class, $bus);
 
+        $timestamp = strtotime('2023-01-01');
         $client->jsonRequest('POST', '/api/fetch-orders', [
-            'from' => '2023-01-01',
-            'marketplace' => 'allegro',
+            'date_from' => $timestamp,
+            'filter_order_source' => 'allegro',
         ]);
 
         $this->assertResponseStatusCodeSame(202);
@@ -53,9 +54,9 @@ class FetchOrdersControllerTest extends WebTestCase
         static::getContainer()->set(MessageBusInterface::class, $bus);
 
         $client->jsonRequest('POST', '/api/fetch-orders', [
-            'from' => 'invalid-date',
+            'date_from' => 'invalid-date',
         ]);
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
     }
 }
