@@ -119,6 +119,8 @@ php bin/console app:fetch-orders --marketplace=allegro --from=2024-01-01
 
 **Cel:** Sprawdzenie, że po przekroczeniu progu błędów API Baselinker aplikacja zwraca **503** z JSON `error: service_unavailable`.
 
+**Uwaga:** Jeśli w pętli dostajesz **HTTP 000** – curl w ogóle nie łączy się z serwerem (aplikacja nie działa pod danym adresem lub zły port). Sprawdź: `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/api/health` (Docker) lub `http://localhost:8000/api/health` (Symfony CLI) – powinno być **200**. Upewnij się, że serwis jest włączony (`make up` / `symfony server:start`) i że w pętli używasz tego samego URL co w wymaganiach (np. **8080** dla Docker).
+
 **Warunek:** Ganesha używa strategii Rate: w oknie 30 s, przy **min. 10 requestach** i **≥50% błędów** obwód się otwiera. Wiadomość `FetchOrders` jest obsługiwana **synchronicznie** (transport `sync`), więc każdy `POST /api/orders/fetch` od razu wywołuje Baselinker w tej samej sesji – błędy są liczone i po otwarciu obwodu ten sam endpoint zwraca 503.
 
 **Krok 1 – ustaw nieprawidłowy token (żeby każde wywołanie Baselinker kończyło się błędem)**  
@@ -126,11 +128,9 @@ W pliku `.env.local`:
 ```bash
 BASELINKER_API_TOKEN=invalid_token_for_testing
 ```
-Zrestartuj serwer:
-```bash
-symfony server:stop
-symfony server:start -d
-```
+Zrestartuj aplikację, żeby wczytała nowy env:
+- **Symfony CLI:** `symfony server:stop` → `symfony server:start -d`
+- **Docker:** `docker compose restart app` (w katalogu projektu; albo `docker restart baselinker_app`)
 
 **Krok 2 – wykonaj min. 10 requestów (wszystkie zakończą się błędem po stronie Baselinker)**  
 Wklej w terminal (np. 12 wywołań):
@@ -159,7 +159,7 @@ oraz w ostatniej linii: `HTTP_CODE:503`.
 
 **Weryfikacja:** W odpowiedzi musi być `"error":"service_unavailable"` i status HTTP 503.
 
-**Po teście:** Przywróć prawidłowy `BASELINKER_API_TOKEN` w `.env.local` i zrestartuj serwer.
+**Po teście:** Przywróć prawidłowy `BASELINKER_API_TOKEN` w `.env.local` i zrestartuj aplikację (jak wyżej: Symfony CLI lub Docker).
 
 ---
 
@@ -169,7 +169,7 @@ oraz w ostatniej linii: `HTTP_CODE:503`.
 
 **Kroki:**
 1. Otwórz obwód (sekcja 5: nieprawidłowy token, min. 10× POST `/api/orders/fetch`).
-2. Przywróć **prawidłowy** token w `.env.local` i zrestartuj serwer.
+2. Przywróć **prawidłowy** token w `.env.local` i zrestartuj aplikację (Symfony CLI lub `docker compose restart app`).
 3. Odczekaj **ok. 10 sekund** (w tym czasie obwód przejdzie w half-open).
 4. Wykonaj **jeden** request:
    ```bash
