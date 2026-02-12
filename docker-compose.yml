@@ -16,7 +16,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: baselinker_nginx
-    volumes:
+    volumes:git
       - ./:/app
       - ./docker/nginx/dev.conf:/etc/nginx/conf.d/default.conf
     ports:

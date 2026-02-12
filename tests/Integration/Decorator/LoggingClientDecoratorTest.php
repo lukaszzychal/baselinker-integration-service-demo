@@ -17,7 +17,6 @@ class LoggingClientDecoratorTest extends KernelTestCase
 
         $client = $container->get(BaselinkerClientInterface::class);
 
-        // Asercja: Czy to, co dostaliśmy, to instancja Dekoratora?
         $this->assertInstanceOf(LoggingClientDecorator::class, $client);
     }
 }

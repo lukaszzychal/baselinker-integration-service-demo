@@ -35,7 +35,7 @@ final class OrderMapperTest extends TestCase
         $this->assertEquals('123', $dto->externalId);
         $this->assertEquals('allegro', $dto->marketplace);
         $this->assertEquals('john.doe', $dto->customerName);
-        $this->assertEquals(13000, $dto->totalAmount); // (50*2) + (20*1) + 10 = 130 -> 13000 groszy
+        $this->assertEquals(13000, $dto->totalAmount);
         $this->assertEquals(1234567890, $dto->createdAt->getTimestamp());
     }
 
