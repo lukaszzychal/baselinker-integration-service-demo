@@ -17,6 +17,7 @@
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
         "symfony/http-client": "6.4.*",
+        "symfony/lock": "6.4.*",
         "symfony/messenger": "6.4.*",
         "symfony/monolog-bundle": "^3.11",
         "symfony/property-access": "6.4.*",

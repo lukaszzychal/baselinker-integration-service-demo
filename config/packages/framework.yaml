@@ -17,6 +17,12 @@ framework:
     php_errors:
         log: true
 
+    rate_limiter:
+        baselinker_api:
+            policy: 'fixed_window'
+            limit: 100
+            interval: '60 seconds'
+
 when@test:
     framework:
         test: true

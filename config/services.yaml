@@ -33,10 +33,17 @@ services:
 
     App\Integration\Decorator\LoggingClientDecorator:
         decorates: App\Integration\BaselinkerClient
+        decoration_priority: 10
         arguments:
             $client: '@.inner'
 
-    
+    App\Integration\Decorator\RateLimitingClientDecorator:
+        decorates: App\Integration\BaselinkerClient
+        decoration_priority: 20
+        arguments:
+            $client: '@.inner'
+            $baselinkerApiLimiter: '@limiter.baselinker_api'
+
     App\Repository\OrderRepositoryInterface:
         alias: App\Repository\OrderRepository
         public: true
